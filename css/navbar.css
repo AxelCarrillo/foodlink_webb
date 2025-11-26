@@ -1,0 +1,144 @@
+/* Header */
+header {
+    background: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+nav {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 72px;
+}
+
+.logo-section {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.logo {
+    width: 48px;
+    height: 48px;
+    background: #ffffff;
+    border: 2px solid #3b82f6;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: #3b82f6;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    transition: all 0.3s ease;
+}
+
+.logo:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+}
+
+.title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #111827;
+    letter-spacing: -0.3px;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.nav-links a {
+    padding: 10px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #6b7280;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.nav-links a:hover {
+    color: #3b82f6;
+    background: #f0f9ff;
+}
+
+.nav-links a[href="inicio.php"] {
+    color: #3b82f6;
+    background: #f0f9ff;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: 16px;
+    padding-left: 16px;
+    border-left: 1px solid #e5e7eb;
+}
+
+.user-info span {
+    font-size: 14px;
+    color: #374151;
+    font-weight: 600;
+}
+
+.logout-btn {
+    padding: 8px 16px !important;
+    background: #fee2e2 !important;
+    color: #dc2626 !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+}
+
+.logout-btn:hover {
+    background: #fecaca !important;
+    color: #b91c1c !important;
+}
+
+/* Responsive para el navbar */
+@media (max-width: 768px) {
+    nav {
+        flex-direction: column;
+        height: auto;
+        padding: 16px 20px;
+        gap: 16px;
+    }
+
+    .title {
+        font-size: 14px;
+        text-align: center;
+    }
+
+    .nav-links {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .nav-links a {
+        font-size: 13px;
+        padding: 8px 12px;
+    }
+
+    .user-info {
+        margin-left: 0;
+        padding-left: 0;
+        border-left: none;
+        padding-top: 12px;
+        border-top: 1px solid #e5e7eb;
+        width: 100%;
+        justify-content: center;
+    }
+}
