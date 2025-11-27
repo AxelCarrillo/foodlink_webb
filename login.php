@@ -95,8 +95,6 @@ if (isset($_SESSION['usuario']) && !empty($_SESSION['usuario'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Sistema Presidencial de Apoyo Alimentario</title>
-    <link rel="icon" type="image/png" href="favicon.png">
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
     <style>
         * {
             margin: 0;
@@ -257,7 +255,7 @@ if (isset($_SESSION['usuario']) && !empty($_SESSION['usuario'])) {
 
         .form-input {
             width: 100%;
-            padding: 13px 16px;
+            padding: 13px 46px 13px 16px;
             border: 1.5px solid #e5e7eb;
             border-radius: 10px;
             font-size: 15px;
@@ -284,6 +282,34 @@ if (isset($_SESSION['usuario']) && !empty($_SESSION['usuario'])) {
             transform: translateY(-50%);
             font-size: 18px;
             pointer-events: none;
+            color: #6b7280;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            color: #6b7280;
+            padding: 4px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .password-toggle:hover {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .password-toggle:active {
+            transform: translateY(-50%) scale(0.95);
         }
 
         .btn {
@@ -409,7 +435,9 @@ if (isset($_SESSION['usuario']) && !empty($_SESSION['usuario'])) {
                             placeholder="Ingresa tu contraseña"
                             autocomplete="current-password"
                         >
-                        <span class="input-icon">🔒</span>
+                        <button type="button" class="password-toggle" id="passwordToggle" aria-label="Mostrar contraseña">
+                            👁️
+                        </button>
                     </div>
                 </div>
                 
@@ -432,6 +460,23 @@ if (isset($_SESSION['usuario']) && !empty($_SESSION['usuario'])) {
             const inputs = document.querySelectorAll('.form-input');
             const button = document.querySelector('.btn-primary');
             const form = document.querySelector('.login-form');
+            const passwordToggle = document.getElementById('passwordToggle');
+            const passwordInput = document.getElementById('password');
+            
+            // Función para mostrar/ocultar contraseña
+            passwordToggle.addEventListener('click', function() {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                
+                // Cambiar el ícono del ojito
+                if (type === 'text') {
+                    this.innerHTML = '🔒';
+                    this.setAttribute('aria-label', 'Ocultar contraseña');
+                } else {
+                    this.innerHTML = '👁️';
+                    this.setAttribute('aria-label', 'Mostrar contraseña');
+                }
+            });
             
             // Auto-focus en el primer campo
             document.getElementById('username').focus();
@@ -460,7 +505,4 @@ if (isset($_SESSION['usuario']) && !empty($_SESSION['usuario'])) {
         console.log('🔐 Sistema de Login - Cargado correctamente');
     </script>
 </body>
-
 </html>
-
-
