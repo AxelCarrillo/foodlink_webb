@@ -1,16 +1,42 @@
 <?php
-// inicio.php - VERSIÓN FINAL
-require_once 'config.php'; // Incluir config
+// inicio.php - VERSIÓN COMPLETA
+require_once 'config.php';
 
-// Verificar autenticación usando el mismo sistema que validar_ine.php
+// Verificar autenticación
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
     header('Location: login.php');
     exit;
 }
 
-// Obtener datos del usuario desde la sesión admin
-$nombre_usuario = isset($_SESSION['admin_user']) ? $_SESSION['admin_user'] : 'Admin';
-$rol_usuario = isset($_SESSION['rol']) ? $_SESSION['rol'] : '';
+$nombre_usuario = $_SESSION['admin_user'] ?? 'Admin';
+$total_donaciones_activas = 0;
+$total_beneficiarios = 0;
+
+// OBTENER CONEXIÓN USANDO getDB()
+try {
+    $pdo = getDB();
+    
+    // CONSULTA 1: Donaciones activas (estado = 'disponible')
+    $sql_donaciones = "SELECT COUNT(*) as total FROM publicaciones_donaciones WHERE estado = 'disponible'";
+    $stmt_donaciones = $pdo->query($sql_donaciones);
+    if ($stmt_donaciones) {
+        $resultado_donaciones = $stmt_donaciones->fetch(PDO::FETCH_ASSOC);
+        $total_donaciones_activas = $resultado_donaciones['total'] ?? 0;
+    }
+    
+    // CONSULTA 2: Total beneficiarios (tipo = 'beneficiado')
+    $sql_beneficiarios = "SELECT COUNT(*) as total FROM usuarios WHERE tipo = 'beneficiado'";
+    $stmt_beneficiarios = $pdo->query($sql_beneficiarios);
+    if ($stmt_beneficiarios) {
+        $resultado_beneficiarios = $stmt_beneficiarios->fetch(PDO::FETCH_ASSOC);
+        $total_beneficiarios = $resultado_beneficiarios['total'] ?? 0;
+    }
+    
+} catch (PDOException $e) {
+    $total_donaciones_activas = 0;
+    $total_beneficiarios = 0;
+    $error_info = "<!-- Error de consulta: " . $e->getMessage() . " -->";
+}
 ?>
 
 <!DOCTYPE html>
@@ -19,12 +45,12 @@ $rol_usuario = isset($_SESSION['rol']) ? $_SESSION['rol'] : '';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema Presidencial de Apoyo Alimentario</title>
-    <link rel="icon" type="image/png" href="favicon.png">
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="stylesheet" href="css/navbar.css">
     <link rel="stylesheet" href="css/style_inicio.css">
 </head>
 <body>
+    <?php echo $error_info ?? ''; ?>
+    
     <header>
         <nav>
             <div class="logo-section">
@@ -66,7 +92,6 @@ $rol_usuario = isset($_SESSION['rol']) ? $_SESSION['rol'] : '';
                 <p class="card-description">Gestión de donaciones</p>
             </a>
 
-            <!-- NUEVO RECUADRO PARA VER DONADORES -->
             <a href="ver_donadores.php" class="card">
                 <div class="card-icon">🏢</div>
                 <h2 class="card-title">Donadores</h2>
@@ -79,28 +104,14 @@ $rol_usuario = isset($_SESSION['rol']) ? $_SESSION['rol'] : '';
                 <div class="stat-icon">📊</div>
                 <div class="stat-info">
                     <div class="stat-label">Total Beneficiarios</div>
-                    <div class="stat-value">1,247</div>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">👨‍👩‍👧‍👦</div>
-                <div class="stat-info">
-                    <div class="stat-label">Familias Atendidas</div>
-                    <div class="stat-value">342</div>
+                    <div class="stat-value"><?php echo $total_beneficiarios; ?></div>
                 </div>
             </div>
             <div class="stat-card">
                 <div class="stat-icon">🎁</div>
                 <div class="stat-info">
                     <div class="stat-label">Donaciones Activas</div>
-                    <div class="stat-value">28</div>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">✅</div>
-                <div class="stat-info">
-                    <div class="stat-label">Validaciones Hoy</div>
-                    <div class="stat-value">15</div>
+                    <div class="stat-value"><?php echo $total_donaciones_activas; ?></div>
                 </div>
             </div>
         </div>
@@ -108,77 +119,9 @@ $rol_usuario = isset($_SESSION['rol']) ? $_SESSION['rol'] : '';
     </main>
 
     <script>
-        // Animaciones y efectos interactivos
         document.addEventListener('DOMContentLoaded', function() {
-            // Efecto parallax suave en las cards
-            const cards = document.querySelectorAll('.card');
-            
-            cards.forEach(card => {
-                card.addEventListener('mousemove', function(e) {
-                    const rect = card.getBoundingClientRect();
-                    const x = e.clientX - rect.left;
-                    const y = e.clientY - rect.top;
-                    
-                    const centerX = rect.width / 2;
-                    const centerY = rect.height / 2;
-                    
-                    const rotateX = (y - centerY) / 20;
-                    const rotateY = (centerX - x) / 20;
-                    
-                    card.style.transform = `translateY(-8px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-                });
-                
-                card.addEventListener('mouseleave', function() {
-                    card.style.transform = 'translateY(0) rotateX(0) rotateY(0)';
-                });
-            });
-
-            // Efecto de clic en las cards
-            cards.forEach(card => {
-                card.addEventListener('click', function(e) {
-                    const ripple = document.createElement('div');
-                    ripple.style.position = 'absolute';
-                    ripple.style.borderRadius = '50%';
-                    ripple.style.background = 'rgba(59, 130, 246, 0.3)';
-                    ripple.style.width = '20px';
-                    ripple.style.height = '20px';
-                    ripple.style.left = e.offsetX - 10 + 'px';
-                    ripple.style.top = e.offsetY - 10 + 'px';
-                    ripple.style.animation = 'ripple 0.6s ease-out';
-                    ripple.style.pointerEvents = 'none';
-                    
-                    this.appendChild(ripple);
-                    
-                    setTimeout(() => ripple.remove(), 600);
-                });
-            });
-
-            console.log('✅ Sistema de Apoyo Alimentario - Cargado correctamente');
+            console.log('✅ Sistema cargado');
         });
-
-        // Función para agregar administrador - Redirige a agregar_admin.php
-        function agregarAdministrador() {
-            window.location.href = 'agregar_admin.php';
-        }
-
-        // Animación CSS para el ripple
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes ripple {
-                from {
-                    transform: scale(0);
-                    opacity: 1;
-                }
-                to {
-                    transform: scale(20);
-                    opacity: 0;
-                }
-            }
-        `;
-        document.head.appendChild(style);
     </script>
 </body>
-
 </html>
-
-
