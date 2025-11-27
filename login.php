@@ -95,7 +95,7 @@ if (isset($_SESSION['usuario']) && !empty($_SESSION['usuario'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Sistema Presidencial de Apoyo Alimentario</title>
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" href="/favicon.ico">
     <style>
         * {
             margin: 0;
@@ -461,3 +461,4 @@ if (isset($_SESSION['usuario']) && !empty($_SESSION['usuario'])) {
 </body>
 
 </html>
+
