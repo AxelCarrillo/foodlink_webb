@@ -39,12 +39,12 @@ if (isset($_GET['eliminar'])) {
     }
 }
 
-// Obtener lista de cocineras
+// Obtener lista de cocineras CON dirección
 try {
     $stmt = $pdo->query("
         SELECT 
             id, usuario, nombre_completo, correo, telefono, 
-            fecha_registro, aprobado, tipo
+            direccion_localidad, fecha_registro, aprobado, tipo
         FROM usuarios 
         WHERE tipo = 'cocinera' 
         ORDER BY fecha_registro DESC
@@ -91,8 +91,16 @@ $nombre_usuario = isset($_SESSION['admin_user']) ? $_SESSION['admin_user'] : 'Ad
 
     <main>
         <div class="page-header">
-            <h1>Gestión de Cocineras</h1>
-            <p>Visualiza y administra a las cocineras registradas en el programa alimentario</p>
+            <div class="header-actions">
+                <div>
+                    <h1>Gestión de Cocineras</h1>
+                    <p>Visualiza y administra a las cocineras registradas en el programa alimentario</p>
+                </div>
+                <a href="cocineras.php" class="btn-nueva-cocinera">
+                    <span>👩‍🍳</span>
+                    ¿Cocineras Nueva?
+                </a>
+            </div>
         </div>
 
         <?php if ($mensaje): ?>
@@ -125,6 +133,7 @@ $nombre_usuario = isset($_SESSION['admin_user']) ? $_SESSION['admin_user'] : 'Ad
                                     <th>Usuario</th>
                                     <th>Correo</th>
                                     <th>Teléfono</th>
+                                    <th>Dirección</th>
                                     <th>Fecha Registro</th>
                                     <th>Estado</th>
                                     <th>Acciones</th>
@@ -147,6 +156,15 @@ $nombre_usuario = isset($_SESSION['admin_user']) ? $_SESSION['admin_user'] : 'Ad
                                                 <span style="color: #9ca3af; font-style: italic;">No registrado</span>
                                             <?php endif; ?>
                                         </td>
+                                        <td>
+                                            <?php if (!empty($cocinera['direccion_localidad'])): ?>
+                                                <span class="localidad-badge">
+                                                    <?php echo htmlspecialchars($cocinera['direccion_localidad']); ?>
+                                                </span>
+                                            <?php else: ?>
+                                                <span style="color: #9ca3af; font-style: italic;">No especificada</span>
+                                            <?php endif; ?>
+                                        </td>
                                         <td><?php echo date('d/m/Y H:i', strtotime($cocinera['fecha_registro'])); ?></td>
                                         <td>
                                             <?php if ($cocinera['aprobado'] === true || $cocinera['aprobado'] === 't'): ?>
@@ -155,8 +173,16 @@ $nombre_usuario = isset($_SESSION['admin_user']) ? $_SESSION['admin_user'] : 'Ad
                                                 <span class="status-pendiente">⏳ Pendiente</span>
                                             <?php endif; ?>
                                         </td>
-                                        <td>
-                                            <button onclick="confirmarEliminacion(<?php echo $cocinera['id']; ?>, '<?php echo htmlspecialchars(addslashes($cocinera['nombre_completo'])); ?>')" class="btn-delete">Eliminar</button>
+                                        <td class="actions-column">
+                                            <!-- Botón para editar (puedes implementarlo después) -->
+                                            <!--
+                                            <a href="editar_cocinera.php?id=<?php echo $cocinera['id']; ?>" class="btn-edit">
+                                                Editar
+                                            </a>
+                                            -->
+                                            <button onclick="confirmarEliminacion(<?php echo $cocinera['id']; ?>, '<?php echo htmlspecialchars(addslashes($cocinera['nombre_completo'])); ?>')" class="btn-delete">
+                                                Eliminar
+                                            </button>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -168,8 +194,8 @@ $nombre_usuario = isset($_SESSION['admin_user']) ? $_SESSION['admin_user'] : 'Ad
                         <div class="empty-state-icon">👩‍🍳</div>
                         <h3>No hay cocineras registradas</h3>
                         <p>Las cocineras aparecerán aquí una vez que se registren en el sistema con el tipo "cocinera"</p>
-                        <a href="regis_cocineras.php" class="btn-register">
-                            ➕ Registrar Nueva Cocinera
+                        <a href="cocineras.php" class="btn-nueva-cocinera">
+                            👩‍🍳 ¿Cocineras Nueva?
                         </a>
                     </div>
                 <?php endif; ?>
@@ -193,5 +219,4 @@ $nombre_usuario = isset($_SESSION['admin_user']) ? $_SESSION['admin_user'] : 'Ad
         }, 5000);
     </script>
 </body>
-
 </html>
