@@ -474,3 +474,251 @@
                 justify-content: center;
             }
         }
+
+                /* Estilos para el botón de agarrar donación */
+        .btn-tomar-donacion {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            margin-top: 10px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .btn-tomar-donacion:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+            background: linear-gradient(135deg, #0da271 0%, #047857 100%);
+        }
+
+        .btn-tomar-donacion:disabled,
+        .btn-tomar-donacion.disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-tomar-donacion:disabled:hover,
+        .btn-tomar-donacion.disabled:hover {
+            background: #9ca3af;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-tomar-donacion span {
+            font-size: 16px;
+        }
+
+        .donacion-tomada-info {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 10px;
+            font-size: 13px;
+        }
+
+        .donacion-tomada-info strong {
+            color: #0369a1;
+        }
+
+        .donacion-tomada-info p {
+            margin: 4px 0;
+            line-height: 1.4;
+        }
+
+        .donacion-tomada-info .fecha-info {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+
+        /* Estilo para donaciones tomadas */
+        .donation-card.tomada {
+            position: relative;
+            border-left: 4px solid #ef4444;
+        }
+
+        .tomada-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ef4444;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            z-index: 1;
+        }
+
+        /* Mensajes */
+        .mensaje {
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            font-weight: 500;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .mensaje.exito {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .mensaje.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .mensaje.info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #93c5fd;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Ajustes para las tarjetas de donación */
+        .donation-actions {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        /* Modal de confirmación */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #111827;
+        }
+
+        .modal-message {
+            color: #6b7280;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .btn-modal-cancel {
+            background: #e5e7eb;
+            color: #374151;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .btn-modal-confirm {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .btn-modal-confirm:hover {
+            background: #059669;
+        }
+
+        /* Nuevos estilos para estado */
+        .status-no_disponible {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* Botón de liberar donación */
+        .btn-liberar-donacion {
+            background: #f59e0b;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 8px;
+            width: 100%;
+        }
+
+        .btn-liberar-donacion:hover {
+            background: #d97706;
+        }
+
+        /* Indicador de quién tomó la donación */
+        .usuario-tomo-indicador {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+            padding: 8px;
+            background: #f8fafc;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        .usuario-tomo-indicador span:first-child {
+            color: #6b7280;
+        }
+
+        .usuario-tomo-indicador strong {
+            color: #374151;
+        }
