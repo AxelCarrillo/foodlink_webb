@@ -23,10 +23,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registrar'])) {
     $telefono = trim($_POST['telefono']);
     $contrasena = $_POST['contrasena'];
     $confirmar_contrasena = $_POST['confirmar_contrasena'];
+    $direccion_localidad = isset($_POST['direccion_localidad']) ? trim($_POST['direccion_localidad']) : '';
     
     // Validaciones
-    if (empty($nombre_completo) || empty($correo) || empty($contrasena)) {
+    if (empty($nombre_completo) || empty($correo) || empty($contrasena) || empty($direccion_localidad)) {
         $mensaje = 'Todos los campos obligatorios deben ser completados';
+        $tipo_mensaje = 'error';
+    } elseif (!in_array($direccion_localidad, ['La Cruz', 'Paraíso', 'Guadalupe', 'La Cañada', 'Rojo Gómez', 'Huapalcalco'])) {
+        $mensaje = 'Seleccione una localidad válida';
         $tipo_mensaje = 'error';
     } elseif ($contrasena !== $confirmar_contrasena) {
         $mensaje = 'Las contraseñas no coinciden';
@@ -63,10 +67,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registrar'])) {
                     $contador++;
                 }
                 
-                // Para PostgreSQL usamos CURRENT_TIMESTAMP en lugar de NOW()
-                $stmt = $pdo->prepare("INSERT INTO usuarios (usuario, contrasena, tipo, correo, nombre_completo, telefono, fecha_registro, aprobado) VALUES (?, ?, 'cocinera', ?, ?, ?, CURRENT_TIMESTAMP, true)");
+                // Insertar con dirección localidad
+                $stmt = $pdo->prepare("INSERT INTO usuarios (usuario, contrasena, tipo, correo, nombre_completo, telefono, direccion_localidad, fecha_registro, aprobado) VALUES (?, ?, 'cocinera', ?, ?, ?, ?, CURRENT_TIMESTAMP, true)");
                 
-                if ($stmt->execute([$usuario, $password_hash, $correo, $nombre_completo, $telefono])) {
+                if ($stmt->execute([$usuario, $password_hash, $correo, $nombre_completo, $telefono, $direccion_localidad])) {
                     $mensaje = 'Cocinera registrada exitosamente. Usuario: ' . $usuario;
                     $tipo_mensaje = 'exito';
                     
@@ -74,6 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registrar'])) {
                     $_POST['nombre_completo'] = '';
                     $_POST['correo'] = '';
                     $_POST['telefono'] = '';
+                    $_POST['direccion_localidad'] = '';
                 }
             }
         } catch (PDOException $e) {
@@ -108,9 +113,9 @@ if (isset($_GET['eliminar'])) {
     }
 }
 
-// Obtener lista de cocineras
+// Obtener lista de cocineras CON dirección localidad
 try {
-    $stmt = $pdo->query("SELECT id, nombre_completo, correo, telefono, fecha_registro FROM usuarios WHERE tipo = 'cocinera' ORDER BY fecha_registro DESC");
+    $stmt = $pdo->query("SELECT id, nombre_completo, correo, telefono, direccion_localidad, fecha_registro FROM usuarios WHERE tipo = 'cocinera' ORDER BY fecha_registro DESC");
     $cocineras = $stmt->fetchAll();
 } catch (PDOException $e) {
     $mensaje = 'Error al cargar cocineras: ' . $e->getMessage();
@@ -379,7 +384,8 @@ $nombre_usuario = isset($_SESSION['admin_user']) ? $_SESSION['admin_user'] : 'Ad
             color: #ef4444;
         }
 
-        .form-group input {
+        .form-group input,
+        .form-group select {
             width: 100%;
             padding: 12px 16px;
             border: 1px solid #d1d5db;
@@ -389,10 +395,21 @@ $nombre_usuario = isset($_SESSION['admin_user']) ? $_SESSION['admin_user'] : 'Ad
             background: #ffffff;
         }
 
-        .form-group input:focus {
+        .form-group input:focus,
+        .form-group select:focus {
             outline: none;
             border-color: #3b82f6;
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .form-group select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            background-size: 16px;
+            padding-right: 40px;
         }
 
         .btn {
@@ -488,6 +505,17 @@ $nombre_usuario = isset($_SESSION['admin_user']) ? $_SESSION['admin_user'] : 'Ad
             transform: translateY(-1px);
         }
 
+        .localidad-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #f3f4f6;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #374151;
+            border: 1px solid #e5e7eb;
+        }
+
         /* Empty State */
         .empty-state {
             text-align: center;
@@ -554,6 +582,15 @@ $nombre_usuario = isset($_SESSION['admin_user']) ? $_SESSION['admin_user'] : 'Ad
             .form-section,
             .list-section {
                 padding: 24px;
+            }
+
+            table {
+                min-width: 400px;
+            }
+
+            th, td {
+                padding: 12px 8px;
+                font-size: 13px;
             }
         }
 
@@ -632,6 +669,20 @@ $nombre_usuario = isset($_SESSION['admin_user']) ? $_SESSION['admin_user'] : 'Ad
                     </div>
 
                     <div class="form-group">
+                        <label>Localidad/Colonia <span class="required">*</span></label>
+                        <select name="direccion_localidad" required>
+                            <option value="">Seleccione una localidad</option>
+                            <option value="La Cruz" <?php echo (isset($_POST['direccion_localidad']) && $_POST['direccion_localidad'] == 'La Cruz') ? 'selected' : ''; ?>>La Cruz</option>
+                            <option value="Paraíso" <?php echo (isset($_POST['direccion_localidad']) && $_POST['direccion_localidad'] == 'Paraíso') ? 'selected' : ''; ?>>Paraíso</option>
+                            <option value="Guadalupe" <?php echo (isset($_POST['direccion_localidad']) && $_POST['direccion_localidad'] == 'Guadalupe') ? 'selected' : ''; ?>>Guadalupe</option>
+                            <option value="La Cañada" <?php echo (isset($_POST['direccion_localidad']) && $_POST['direccion_localidad'] == 'La Cañada') ? 'selected' : ''; ?>>La Cañada</option>
+                            <option value="Rojo Gómez" <?php echo (isset($_POST['direccion_localidad']) && $_POST['direccion_localidad'] == 'Rojo Gómez') ? 'selected' : ''; ?>>Rojo Gómez</option>
+                            <option value="Huapalcalco" <?php echo (isset($_POST['direccion_localidad']) && $_POST['direccion_localidad'] == 'Huapalcalco') ? 'selected' : ''; ?>>Huapalcalco</option>
+                        </select>
+                        <small style="color: #6b7280; font-size: 13px; margin-top: 4px; display: block;">Seleccione la localidad donde reside la cocinera</small>
+                    </div>
+
+                    <div class="form-group">
                         <label>Contraseña <span class="required">*</span></label>
                         <input type="password" name="contrasena" required minlength="6" placeholder="Mínimo 6 caracteres">
                     </div>
@@ -657,6 +708,7 @@ $nombre_usuario = isset($_SESSION['admin_user']) ? $_SESSION['admin_user'] : 'Ad
                                     <th>Nombre Completo</th>
                                     <th>Correo</th>
                                     <th>Teléfono</th>
+                                    <th>Localidad</th>
                                     <th>Fecha Registro</th>
                                     <th>Acciones</th>
                                 </tr>
@@ -668,6 +720,13 @@ $nombre_usuario = isset($_SESSION['admin_user']) ? $_SESSION['admin_user'] : 'Ad
                                         <td><?php echo htmlspecialchars($cocinera['nombre_completo']); ?></td>
                                         <td><?php echo htmlspecialchars($cocinera['correo']); ?></td>
                                         <td><?php echo htmlspecialchars($cocinera['telefono'] ?: 'No especificado'); ?></td>
+                                        <td>
+                                            <?php if ($cocinera['direccion_localidad']): ?>
+                                                <span class="localidad-badge"><?php echo htmlspecialchars($cocinera['direccion_localidad']); ?></span>
+                                            <?php else: ?>
+                                                <span style="color: #9ca3af;">No especificada</span>
+                                            <?php endif; ?>
+                                        </td>
                                         <td><?php echo date('d/m/Y', strtotime($cocinera['fecha_registro'])); ?></td>
                                         <td>
                                             <button onclick="confirmarEliminacion(<?php echo $cocinera['id']; ?>, '<?php echo htmlspecialchars(addslashes($cocinera['nombre_completo'])); ?>')" class="btn-delete">Eliminar</button>
