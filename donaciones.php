@@ -42,11 +42,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['agarrar_donacion'])) 
             $updateStmt = $pdo->prepare("
                 UPDATE publicaciones_donaciones 
                 SET estado = 'no_disponible',
-                    admin_tomador_id = ?,  // <-- NUEVO CAMPO
+                    usuario_id = ?,  
                     fecha_tomada = CURRENT_TIMESTAMP,
                     fecha_actualizacion = CURRENT_TIMESTAMP
                 WHERE id = ?
-                AND estado = 'disponible' 
             ");
             
             if ($updateStmt->execute([$usuario_id, $donacion_id])) {
