@@ -208,6 +208,7 @@ if (isset($_GET['mensaje']) && isset($_GET['tipo'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Módulo de Donaciones - Sistema Presidencial de Apoyo Alimentario</title>
+    <link rel="stylesheet" href="css/navbar.css">
     <style>
                 * {
             margin: 0;
@@ -1276,4 +1277,5 @@ if (isset($_GET['mensaje']) && isset($_GET['tipo'])) {
     </script>
 </body>
 </html>
+
 
