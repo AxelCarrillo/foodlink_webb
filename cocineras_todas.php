@@ -193,4 +193,5 @@ $nombre_usuario = isset($_SESSION['admin_user']) ? $_SESSION['admin_user'] : 'Ad
         }, 5000);
     </script>
 </body>
+
 </html>
